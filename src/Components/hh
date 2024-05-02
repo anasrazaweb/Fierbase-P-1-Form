@@ -1,0 +1,36 @@
+import React, { useEffect, useState } from 'react';
+import { getDatabase, onValue, ref } from 'firebase/database';
+import { app } from '../Fierbase';
+
+const StudentList = () => {
+    const [students, setStudents] = useState(null); // Rename state variable to plural
+
+    useEffect(() => {
+        const db = getDatabase(app);
+        const studentRef = ref(db, 'student/'); // Change reference path
+        onValue(studentRef, (snapshot) => {
+            const data = snapshot.val();
+            setStudents(data);
+        });
+    }, []);
+
+    return (
+        <div>
+            <h1 className='text-2xl font-bold text-center underline mt-10'>Student List</h1>
+            {students && (
+                <div>
+                    {Object.entries(students).map(([key, value]) => {
+                        // Use [key, value] instead of [value, index]
+                        return (
+                            <div key={key}>
+                                <div>{value.EmailAdress}</div> {/* Access nested property properly */}
+                            </div>
+                        );
+                    })}
+                </div>
+            )}
+        </div>
+    );
+};
+
+export default StudentList;
